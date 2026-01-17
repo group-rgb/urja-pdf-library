@@ -34,31 +34,49 @@ pdfjsLib.GlobalWorkerOptions.workerSrc =
   './pdfjs/pdf.worker.mjs';
 
 const url = new URLSearchParams(location.search).get('file');
-
 const container = document.getElementById('pdf');
 
-const pdf = await pdfjsLib.getDocument(url).promise;
+let pdfDoc = null;
 
-for (let i = 1; i <= pdf.numPages; i++) {
-  const page = await pdf.getPage(i);
+async function renderPDF() {
+  container.innerHTML = '';
 
-  const viewport = page.getViewport({
-    scale: window.innerWidth < 768 ? 1.2 : 1.6
-  });
+  const screenWidth = window.innerWidth - 20;
 
-  const canvas = document.createElement('canvas');
-  const ctx = canvas.getContext('2d');
+  for (let i = 1; i <= pdfDoc.numPages; i++) {
+    const page = await pdfDoc.getPage(i);
 
-  canvas.width = viewport.width;
-  canvas.height = viewport.height;
+    const unscaled = page.getViewport({ scale: 1 });
+    const scale = screenWidth / unscaled.width;
 
-  container.appendChild(canvas);
+    const viewport = page.getViewport({ scale });
 
-  await page.render({
-    canvasContext: ctx,
-    viewport: viewport
-  }).promise;
+    const canvas = document.createElement('canvas');
+    const ctx = canvas.getContext('2d');
+
+    canvas.width = viewport.width;
+    canvas.height = viewport.height;
+
+    container.appendChild(canvas);
+
+    await page.render({
+      canvasContext: ctx,
+      viewport: viewport
+    }).promise;
+  }
 }
+
+(async function () {
+  pdfDoc = await pdfjsLib.getDocument(url).promise;
+  renderPDF();
+})();
+
+// 🔄 Re-render on rotation / resize
+let resizeTimer;
+window.addEventListener('resize', () => {
+  clearTimeout(resizeTimer);
+  resizeTimer = setTimeout(renderPDF, 300);
+});
 </script>
 
 </body>

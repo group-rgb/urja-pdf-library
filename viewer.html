@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>URJA ARTS PDF Viewer</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<style>
+html, body {
+    margin: 0;
+    padding: 0;
+    height: 100%;
+    background: #111;
+    overflow: hidden;
+}
+
+#pdf-container {
+    height: 100%;
+    overflow-y: auto;
+    -webkit-overflow-scrolling: touch;
+    padding-bottom: 40px;
+}
+
+canvas {
+    display: block;
+    margin: 12px auto;
+    max-width: 100%;
+}
+
+/* Watermark */
+.watermark {
+    position: fixed;
+    inset: 0;
+    pointer-events: none;
+    z-index: 10;
+}
+
+.watermark::before {
+    content: "URJA ARTS   URJA ARTS   URJA ARTS";
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%) rotate(-30deg);
+    font-size: 36px;
+    font-weight: bold;
+    color: rgba(0,128,0,0.18);
+    white-space: nowrap;
+}
+</style>
+</head>
+
+<body>
+
+<div id="pdf-container"></div>
+<div class="watermark"></div>
+
+<script type="module">
+import * as pdfjsLib from "./pdfjs/pdf.mjs";
+
+pdfjsLib.GlobalWorkerOptions.workerSrc =
+    new URL("./pdfjs/pdf.worker.mjs", import.meta.url);
+
+const params = new URLSearchParams(window.location.search);
+const file = params.get("file");
+
+if (!file) {
+    alert("PDF not specified");
+}
+
+const container = document.getElementById("pdf-container");
+
+const pdf = await pdfjsLib.getDocument(file).promise;
+
+for (let i = 1; i <= pdf.numPages; i++) {
+    const page = await pdf.getPage(i);
+    const viewport = page.getViewport({ scale: 1.3 });
+
+    const canvas = document.createElement("canvas");
+    const context = canvas.getContext("2d");
+
+    canvas.width = viewport.width;
+    canvas.height = viewport.height;
+
+    container.appendChild(canvas);
+
+    await page.render({
+        canvasContext: context,
+        viewport: viewport
+    }).promise;
+}
+</script>
+
+</body>
+</html>

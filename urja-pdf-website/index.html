@@ -1,0 +1,180 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Urja Arts | PDF Library</title>
+
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
+
+<style>
+* {
+    box-sizing: border-box;
+    -webkit-tap-highlight-color: transparent;
+}
+
+html, body {
+    margin: 0;
+    height: 100%;
+    font-family: Arial, sans-serif;
+    background: #f4f6f8;
+    user-select: none;
+    touch-action: manipulation;
+}
+
+/* HEADER */
+header {
+    background: linear-gradient(90deg, #1b5e20, #2e7d32);
+    color: #fff;
+    padding: 14px;
+    text-align: center;
+    font-size: 18px;
+    font-weight: bold;
+}
+
+/* LAYOUT */
+.container {
+    display: flex;
+    flex-direction: column;
+    height: calc(100vh - 52px);
+}
+
+/* SIDEBAR */
+.sidebar {
+    background: #fff;
+    border-bottom: 1px solid #ddd;
+}
+
+.pdf-list {
+    display: flex;
+    list-style: none;
+    margin: 0;
+    padding: 0;
+}
+
+.pdf-list li {
+    padding: 12px 14px;
+    font-size: 14px;
+    white-space: nowrap;
+    border-right: 1px solid #eee;
+    cursor: pointer;
+}
+
+.pdf-list li.active {
+    background: #c8e6c9;
+    font-weight: bold;
+}
+
+/* VIEWER */
+.viewer {
+    position: relative;
+    flex: 1;
+    overflow: hidden;
+    background: #000;
+}
+
+iframe {
+    width: 100%;
+    height: 100%;
+    border: none;
+    background: #fff;
+}
+
+/* WATERMARK */
+.watermark {
+    position: absolute;
+    inset: 0;
+    pointer-events: none;
+}
+
+.watermark::before {
+    content: "URJA ARTS   URJA ARTS   URJA ARTS   URJA ARTS";
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%) rotate(-30deg);
+    font-size: 42px;
+    font-weight: bold;
+    color: rgba(0, 128, 0, 0.22);
+    white-space: nowrap;
+}
+
+/* DESKTOP */
+@media (min-width: 768px) {
+    .container {
+        flex-direction: row;
+    }
+    .sidebar {
+        width: 260px;
+        border-right: 1px solid #ddd;
+        border-bottom: none;
+    }
+    .pdf-list {
+        flex-direction: column;
+    }
+    .pdf-list li {
+        border-right: none;
+        border-bottom: 1px solid #eee;
+    }
+}
+</style>
+</head>
+
+<body oncontextmenu="return false;">
+
+<header>URJA ARTS – Digital PDF Library</header>
+
+<div class="container">
+
+    <div class="sidebar">
+        <ul class="pdf-list">
+            <li class="active" data-pdf="pdfs/God%20Pictures.pdf">God Pictures</li>
+            <li data-pdf="pdfs/Muslim%20Pictures.pdf">Muslim Pictures</li>
+            <li data-pdf="pdfs/Rate%20Chart.pdf">Rate Chart</li>
+        </ul>
+    </div>
+
+    <div class="viewer">
+        <iframe id="pdfViewer"></iframe>
+        <div class="watermark"></div>
+    </div>
+
+</div>
+
+<script>
+const viewer = document.getElementById("pdfViewer");
+const items = document.querySelectorAll(".pdf-list li");
+
+function loadPDF(path, el) {
+    viewer.src = "";
+    setTimeout(() => {
+        viewer.src = path + "#toolbar=0&navpanes=0&zoom=page-width";
+    }, 50);
+
+    items.forEach(i => i.classList.remove("active"));
+    el.classList.add("active");
+}
+
+items.forEach(item => {
+    item.addEventListener("click", () => {
+        loadPDF(item.dataset.pdf, item);
+    });
+});
+
+window.onload = () => {
+    if (items.length > 0) {
+        loadPDF(items[0].dataset.pdf, items[0]);
+    }
+};
+
+document.addEventListener("keydown", e => {
+    if (
+        (e.ctrlKey && ["s", "p", "u"].includes(e.key.toLowerCase())) ||
+        e.key === "F12"
+    ) {
+        e.preventDefault();
+    }
+});
+</script>
+
+</body>
+</html>

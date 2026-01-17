@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Urja Arts | PDF Library</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<style>
+* { box-sizing: border-box; }
+
+body {
+    margin: 0;
+    font-family: Arial, sans-serif;
+    background: #f4f6f8;
+}
+
+header {
+    background: linear-gradient(90deg, #1b5e20, #2e7d32);
+    color: #fff;
+    padding: 14px;
+    text-align: center;
+    font-weight: bold;
+}
+
+.tabs {
+    display: flex;
+    background: #fff;
+    border-bottom: 1px solid #ddd;
+}
+
+.tabs button {
+    flex: 1;
+    padding: 12px;
+    font-size: 14px;
+    border: none;
+    background: #fff;
+    cursor: pointer;
+}
+
+.tabs button.active {
+    background: #c8e6c9;
+    font-weight: bold;
+}
+
+.viewer-frame {
+    width: 100%;
+    height: calc(100vh - 98px);
+    border: none;
+}
+</style>
+</head>
+
+<body>
+
+<header>URJA ARTS – Digital PDF Library</header>
+
+<div class="tabs">
+    <button class="active" onclick="openPDF('pdfs/God Pictures.pdf', this)">God Pictures</button>
+    <button onclick="openPDF('pdfs/Muslim Pictures.pdf', this)">Muslim Pictures</button>
+    <button onclick="openPDF('pdfs/Rate Chart.pdf', this)">Rate Chart</button>
+</div>
+
+<iframe id="viewer" class="viewer-frame"></iframe>
+
+<script>
+function openPDF(file, btn) {
+    document.getElementById("viewer").src =
+        "viewer.html?file=" + encodeURIComponent(file);
+
+    document.querySelectorAll(".tabs button")
+        .forEach(b => b.classList.remove("active"));
+
+    btn.classList.add("active");
+}
+
+window.onload = () => {
+    openPDF("pdfs/God Pictures.pdf", document.querySelector(".tabs button"));
+};
+</script>
+
+</body>
+</html>

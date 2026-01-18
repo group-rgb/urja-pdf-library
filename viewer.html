@@ -10,22 +10,68 @@ body { margin:0; background:#111; }
 canvas { display:block; margin:10px auto; }
 
 .watermark {
-  position:fixed;
-  top:50%;
-  left:50%;
-  transform:translate(-50%,-50%) rotate(-30deg);
-  font-size:48px;
-  color:rgba(0,255,0,0.15);
-  pointer-events:none;
-  user-select:none;
+    position: absolute;
+    inset: 0;
+    pointer-events: none;
+    overflow: hidden;
+    z-index: 5;
 }
+
+.watermark::before {
+    content: "URJA ARTS   URJA ARTS   URJA ARTS   URJA ARTS";
+    position: absolute;
+    width: 200%;
+    text-align: center;
+    font-size: 42px;
+    font-weight: 700;
+    color: rgba(46, 125, 50, 0.18);
+    transform: rotate(-30deg);
+    top: 20%;
+    left: -50%;
+    white-space: nowrap;
+}
+
+.watermark::after {
+    content: "URJA ARTS   URJA ARTS   URJA ARTS   URJA ARTS";
+    position: absolute;
+    width: 200%;
+    text-align: center;
+    font-size: 42px;
+    font-weight: 700;
+    color: rgba(46, 125, 50, 0.18);
+    transform: rotate(-30deg);
+    top: 55%;
+    left: -50%;
+    white-space: nowrap;
+}
+
+/* THIRD LINE */
+.watermark span {
+    position: absolute;
+    width: 200%;
+    text-align: center;
+    font-size: 42px;
+    font-weight: 700;
+    color: rgba(46, 125, 50, 0.18);
+    transform: rotate(-30deg);
+    top: 80%;
+    left: -50%;
+    white-space: nowrap;
+}
+ @media (max-width: 768px) {
+    .watermark::before,
+    .watermark::after,
+    .watermark span {
+        font-size: 28px;
+    }
+} 
 </style>
 </head>
 
 <body>
 
 <div id="pdf"></div>
-<div class="watermark">URJA ARTS</div>
+<div class="watermark">URJA ARTS   URJA ARTS   URJA ARTS   URJA ARTS</div>
 
 <script type="module">
 import * as pdfjsLib from './pdfjs/pdf.mjs';
